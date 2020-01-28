@@ -43,7 +43,7 @@ public class Menu {
     public void alternativesMenu() {
 
         while (true) {
-            String alternative = "";
+            String alternative = "0";
             System.out.println("1. to see all items \n2. to order item\n3. to show shopping cart\n4. to exit");
             alternative = sc.nextLine();
 
