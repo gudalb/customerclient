@@ -19,13 +19,11 @@ public class cartItem {
 
     @Override
     public String toString() {
-        return "cartItem{" +
-                "brand='" + brand + '\'' +
-                ", id=" + id +
-                ", price=" + price +
-                ", name='" + name + '\'' +
-                ", itemsize=" + itemsize +
-                ", color='" + color + '\'' +
-                '}' + "\n";
+        return
+            "Brand: " + brand + ", " +
+            "Model: " + name + ", " +
+            "Size: " + itemsize + ", " +
+            "Color: " + color  + ", " +
+            "Price: " + price;
     }
 }

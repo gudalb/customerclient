@@ -11,10 +11,7 @@ public class Main {
 
         Repository repo = new Repository();
         Menu menu = new Menu(repo);
-        User user = menu.loginmenu();
-
-
-
+        menu.loginmenu();
         menu.alternativesMenu();
 
 

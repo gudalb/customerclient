@@ -1,5 +1,6 @@
 package se.nackademin;
 
+import javax.swing.*;
 import java.io.FileInputStream;
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Properties;
 public class Repository {
     Properties p = new Properties();
     int firstorder = 0;
+    List<Item> items = new ArrayList<>();
 
     public Repository() {
         try {
@@ -22,7 +24,6 @@ public class Repository {
 
     public int verifyLogin(String name, String surname, String password) {
         ResultSet result;
-        boolean verified = false;
         int id = 0;
 
         try (
@@ -51,7 +52,7 @@ public class Repository {
         return id;
     }
 
-    public void getItems() {
+    public List<Item> getItems() {
         ResultSet result;
         int stock;
         String brand;
@@ -60,7 +61,7 @@ public class Repository {
         String name;
         int itemsize;
         String color;
-        List<Item> items;
+
 
         try (
                 Connection con = DriverManager.getConnection(p.getProperty("connectionString"),
@@ -70,7 +71,7 @@ public class Repository {
         ) {
 
             result = userCount.executeQuery();
-            items = new ArrayList<>();
+            items.clear();
 
             while (result.next()) {
                 stock = result.getInt("stock");
@@ -81,22 +82,24 @@ public class Repository {
                 itemsize = result.getInt("itemsize");
                 color = result.getString("color");
 
+                if (stock != 0) {
                 Item item = new Item(stock, brand, id, price, name, itemsize, color);
                 items.add(item);
+                }
             }
 
-            System.out.println(items);
+
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        ;
+
+        return items;
 
     }
 
     public void addToCart(User user, int itemID) {
         ResultSet result = null;
-        ResultSet firstorderMessage = null;
         ResultSet orderId;
         int lastOrderId = user.lastOrderId;
 
@@ -114,8 +117,13 @@ public class Repository {
             if(firstorder == 0) {
                 addtocartnopo.setInt(1, user.id);
                 addtocartnopo.setInt(2, itemID);
-                firstorderMessage = addtocartnopo.executeQuery();
-                firstorder = 1;
+                result = addtocartnopo.executeQuery();
+                while (result.next()) {
+                    String resultMessage = result.getString("message");
+                    System.out.println(resultMessage);
+                    if (!resultMessage.equalsIgnoreCase("item out of stock"))
+                        firstorder ++;
+                }
             }
             else {
                 addtocart.setInt(1, user.id);
@@ -135,18 +143,12 @@ public class Repository {
                 firstorder = 2;
             }
 
-            if (firstorderMessage != null) {
-                while (firstorderMessage.next()) {
-                    String resultMessage = firstorderMessage.getString("message");
-                    System.out.println(resultMessage);
-                }
+
+            while (result.next()) {
+                String resultMessage = result.getString("message");
+                System.out.println(resultMessage);
             }
-            if (result != null) {
-                while (result.next()) {
-                    String resultMessage = result.getString("message");
-                    System.out.println(resultMessage);
-                }
-            }
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -185,11 +187,21 @@ public class Repository {
                     itemsize = result.getInt("itemsize");
                     color = result.getString("color");
 
+
                     cartItem item = new cartItem(brand, id, price, name, itemsize, color);
                     items.add(item);
                 }
 
-                System.out.println(items);
+                double sum = 0;
+
+                for (cartItem ci : items) {
+                    sum += ci.price;
+                }
+
+                System.out.println("Items in the shopping cart:");
+                for(cartItem ci: items)
+                    System.out.println(ci);
+                System.out.println("Totalt sum; " + sum);
 
             }
             } catch(SQLException e){
