@@ -2,14 +2,13 @@ package se.nackademin;
 
 public class User {
     String name;
-    String surname;
+    String ssnumber;
     String password;
     int id;
-    int lastOrderId = 0;
 
-    User (String name,String surname, String password, int id) {
+    User (String name, String ssnumber, String password, int id) {
         this.name = name;
-        this.surname = surname;
+        this.ssnumber = ssnumber;
         this.password = password;
         this.id = id;
     }
@@ -18,10 +17,9 @@ public class User {
     public String toString() {
         return "User{" +
                 "name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
+                ", ssnumber='" + ssnumber + '\'' +
                 ", password='" + password + '\'' +
                 ", id=" + id +
-                ", lastOrderId=" + lastOrderId +
                 '}';
     }
 }

@@ -9,62 +9,73 @@ public class Menu {
     Repository repo;
     Scanner sc = new Scanner(System.in);
     User user;
-    List<Item> items = new ArrayList<>();
 
     public Menu(Repository repo) {
         this.repo = repo;
     }
 
     public void loginmenu() {
-        String name = "";
-        String surname = "";
+        String ssnumber = "";
         String password = "";
-        int userID = 0;
+        User user;
 
-        while (userID == 0) {
-            System.out.println("Login \nFirst name:");
-            name = sc.nextLine();
-            System.out.println("Surname:");
-            surname = sc.nextLine();
+        while (true) {
+            System.out.println("Social security number:");
+            ssnumber = sc.nextLine();
             System.out.println("Password:");
             password = sc.nextLine();
 
-            userID = repo.verifyLogin(name, surname, password);
+            user = repo.verifyLogin(ssnumber, password);
+            this.user = user;
 
-            if (userID != 0)
-                System.out.println("account details verified, welcome " + name + "!");
+            if (user != null) {
+                System.out.println("account details verified. Welcome " + user.name);
+                break;
+            }
             else
                 System.out.println("incorrect login");
         }
-
-        user = new User(name, surname, password, userID);
     }
 
     public void alternativesMenu() {
 
+
         while (true) {
             String alternative = "0";
-            System.out.println("1. to see all items \n2. to order item\n3. to show shopping cart\n4. to exit");
+            System.out.println("1. to show accounts \n2. to show loans\n3. to withdraw\n4. to exit");
             alternative = sc.nextLine();
 
 
 
             switch (alternative) {
+
                 case "1":
                     int count = 1;
-                    items = repo.getItems();
-                    for(Item i: items) {
-                        System.out.println("Product number: " + count +" -- " + i);
-                        count++;
+                    repo.getAccounts(user);
+                    for(Account account: repo.accounts) {
+                        System.out.print(count + ". ");
+                        System.out.println(account);
+                        count ++;
                     }
                     break;
                 case "2":
-                    System.out.println("Enter item id to add:");
-                    repo.addToCart(user, items.get(sc.nextInt()-1).id);
+                    count = 1;
+                    repo.getLoans(user);
+                    for(Loan loan: repo.loans) {
+                        System.out.print(count + ". ");
+                        System.out.println(loan);
+                        count++;
+                    }
                     break;
                 case "3":
-                    repo.showCart(user);
+                    System.out.println("Account number:");
+                    int selectedAccount = sc.nextInt();
+                    selectedAccount = repo.accounts.get(selectedAccount -1).id;
+                    System.out.println("Amount:");
+                    double amount = sc.nextDouble();
+                    System.out.println(repo.withdraw(user, selectedAccount, amount));
                     break;
+
                 case "4":
                     System.exit(0);
 
